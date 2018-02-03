@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="eva:antivirusModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Alfresco Anti Virus Scan</description>
+	<author>Ayushi Agrahari</author>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.eisenvault.com/model/antivirus/1.0"
+			prefix="eva" />
+	</namespaces>
+	<aspects>
+		<aspect name="eva:infected">
+			<title>Infected</title>
+			<properties>
+				<property name="eva:date">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
+				<property name="eva:clean">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+		
+	</aspects>	
+</model>

@@ -1,0 +1,37 @@
+<alfresco-config>
+    <!-- Document Library config section -->
+    <config evaluator="string-compare" condition="DocumentLibrary">
+    
+	<aspects>
+    <!-- Aspects that a user can see -->
+    <visible>
+        <aspect name="eva:infected" />      
+    </visible>
+
+    <!-- Aspects that a user can add. Same as "visible" if left empty -->
+    <addable>
+    </addable>
+
+    <!-- Aspects that a user can remove. Same as "visible" if left empty -->
+    <removeable>
+    </removeable>
+	</aspects>
+	</config>
+	
+	
+	
+	<config evaluator="aspect" condition="eva:infected">
+    <forms>
+        <form>
+            <field-visibility>
+                <show id="eva:date" />
+                <show id="eva:clean" />
+            </field-visibility>
+            <appearance>                    
+                <field id="eva:date" label-id="prop.eva.date" />
+                <field id="eva:clean" label-id="prop.eva.clean" />
+            </appearance>
+        </form>
+    </forms>
+</config>
+</alfresco-config>

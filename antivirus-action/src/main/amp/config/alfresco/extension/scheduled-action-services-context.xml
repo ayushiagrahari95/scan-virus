@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+    
+ 
+ <!--
+    Define the model factory used to generate object models suitable for use with freemarker templates. 
+    -->
+    <bean id="templateActionModelFactory" class="org.alfresco.repo.action.scheduled.FreeMarkerWithLuceneExtensionsModelFactory">
+        <property name="serviceRegistry">
+            <ref bean="ServiceRegistry"/>
+        </property>
+    </bean>
+    
+    <bean id="antivirusScan" class="org.alfresco.repo.action.scheduled.SimpleTemplateActionDefinition">
+        <property name="actionName">
+            <value>antivirus-action</value>
+        </property>
+        <property name="parameterTemplates">
+             <map>
+                <entry>
+                    <key>
+                        <value>a-parameter</value>
+                    </key>
+                    <value>a-value</value>
+                </entry>              
+            </map>
+        </property>
+        <property name="templateActionModelFactory">
+            <ref bean="templateActionModelFactory"/>
+        </property>
+        <property name="dictionaryService">
+            <ref bean="DictionaryService"/>
+        </property>
+        <property name="actionService">
+            <ref bean="ActionService"/>
+        </property>
+        <property name="templateService">
+            <ref bean="TemplateService"/>
+        </property>
+    </bean>
+    
+   <!--  <!–
+    Define a job for scanning the files for virus.
+    –> -->
+    <bean id="antivirusScanEveryDay" class="org.alfresco.repo.action.scheduled.CronScheduledQueryBasedTemplateActionDefinition">
+        <property name="transactionMode">
+            <value>ISOLATED_TRANSACTIONS</value>
+        </property>
+        <property name="compensatingActionMode">
+            <value>IGNORE</value>
+        </property>
+        <property name="searchService">
+            <ref bean="SearchService"/>
+        </property>
+        <property name="templateService">
+            <ref bean="TemplateService"/>
+        </property>
+        <property name="queryLanguage">
+            <value>lucene</value>
+        </property>
+        <property name="stores">
+            <list>
+                <value>workspace://SpacesStore</value>
+            </list>
+        </property>
+        <!-- <!– Find all nodes under 'Company Home' –> -->
+        <property name="queryTemplate">
+            <!-- <value>+PATH:"/app:company_home/*//*" +EXACTTYPE:"cm:content"</value> -->
+            	 <value>+PATH:"/app:company_home/*//*"</value>
+        </property>
+        <!-- <!– Execute every Sunday at 10:00 –> -->
+        <property name="cronExpression">
+             <value>0 0/2 * * * ?</value> 
+        </property>
+        <property name="jobName">
+            <value>jobA</value>
+        </property>
+        <property name="jobGroup">
+            <value>jobGroup</value>
+        </property>
+        <property name="triggerName">
+            <value>triggerA</value>
+        </property>
+        <property name="triggerGroup">
+            <value>triggerGroup</value>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="actionService">
+            <ref bean="ActionService"/>
+        </property>
+        <property name="templateActionModelFactory">
+            <ref bean="templateActionModelFactory"/>
+        </property>
+        <property name="templateActionDefinition">
+            <ref bean="antivirusScan"/>
+        </property>
+        <property name="transactionService">
+            <ref bean="TransactionService"/>
+        </property>
+        <property name="runAsUser">
+            <value>admin</value>
+        </property> 
+    </bean>
+   
+</beans>
