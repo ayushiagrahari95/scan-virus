@@ -31,6 +31,8 @@ import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.search.ResultSet;
 
@@ -67,7 +69,7 @@ public class AntivirusActionExecuter extends ActionExecuterAbstractBase {
 	private RuntimeExec command;
 	private VersionService versionService;
 	private SearchService searchService;
-	
+	private SiteService siteService;
 	/**
 	 * @param contentService
 	 *            The contentService to set.
@@ -122,6 +124,9 @@ public class AntivirusActionExecuter extends ActionExecuterAbstractBase {
 		this.searchService = searchService;
 	}
 	
+	public void setsiteService(SiteService siteService) {
+		this.siteService = siteService;
+	}
 	
 	@Override
 	public void init() {
@@ -180,7 +185,7 @@ public class AntivirusActionExecuter extends ActionExecuterAbstractBase {
 					throw new Exception("couldn't get creator's email address");
 				}
 				
-				
+				/*creating new text file and writing the text in case of infected file*/
 				logger.debug("Creating new text file and writing the text in case of infected file");
 				ContentWriter writer=contentService.getWriter(actionedUponNodeRef, ContentModel.PROP_CONTENT, true);
 				writer.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
@@ -200,15 +205,32 @@ public class AntivirusActionExecuter extends ActionExecuterAbstractBase {
 				
 				/*Notify for the infected file to the creator and admin*/
 				logger.debug("notify for the infected file to the creator and admin");
-				String adminUserName = AuthenticationUtil.getAdminUserName();
+				/*fetching the document link for sending in the template*/
+				String siteName, link;
+				String stringNodeRef = actionedUponNodeRef.toString();
+				SiteInfo siteInfo = siteService.getSite(actionedUponNodeRef);
+				logger.debug("Printing siteInfo " + siteInfo);
+				if(siteInfo != null){
+					siteName = siteInfo.getShortName();
+					logger.debug("Printing sitename " + siteName);
+					link = "page/site/" + siteName
+							+ "/document-details?nodeRef=" + stringNodeRef;
+				}else {
+					logger.debug("No siteInfo means the doc is attached externally");
+					link = "page/document-details?nodeRef=" + stringNodeRef;
+				}
 				
+				/*fetching the administrator username and useremail*/
+				String adminUserName = AuthenticationUtil.getAdminUserName();
 				NodeRef adminRef = personService.getPerson(adminUserName);     
 				
+				/*putting the parameters in the template model*/
 				String templatePATH = "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:virus_found.html.ftl\"";
 		        /*String firstName = nodeService.getProperty(creator, ContentModel.PROP_FIRSTNAME).toString();*/
 		        String adminEmail = nodeService.getProperty(adminRef, ContentModel.PROP_EMAIL).toString();
 		        Map<String, Object> templateArgs = new HashMap<String, Object>(8, 1.0f);
 				templateArgs.put("filename", fileName);
+				templateArgs.put("fileLink", link);
 				/*templateArgs.put("firstname", firstName);*/
 				/*templateArgs.put("admin", adminUserName);*/
 				
@@ -222,7 +244,7 @@ public class AntivirusActionExecuter extends ActionExecuterAbstractBase {
 			        templateModel.put("args",(Serializable)templateArgs);
 				
 				
-				// send email message
+				// sending email message
 				Action emailAction = actionService.createAction("mail");
 				emailAction.setParameterValue(MailActionExecuter.PARAM_TO, creatorEmail);
 				emailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, "Virus found in" + " "+fileName);

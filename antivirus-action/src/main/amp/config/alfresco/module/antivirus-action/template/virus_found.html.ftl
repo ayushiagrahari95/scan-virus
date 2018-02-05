@@ -15,8 +15,9 @@
                                           <div style="font-size: 14px; margin: 0px 0px 24px 0px; padding-top: 2px">
                                              <p>Hello,</p>
                                             <p>The file ${args.filename} contains a virus and has been modified by the administrator.</p><br/>
-                                            <p>Click this link to login:<br />
-                                             <br><a href="${shareUrl}">${shareUrl}</a></p><br>
+                                            <p>Click this link to view the item:<br />
+                                             <br> <a href="${shareUrl}/${args.fileLink}">
+                                             ${shareUrl}/${args.fileLink}</a></p><br>
                                              
                                              <p>Sincerely,<br />
                                              EisenVault</p>

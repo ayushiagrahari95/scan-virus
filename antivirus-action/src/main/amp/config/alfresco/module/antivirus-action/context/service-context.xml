@@ -39,6 +39,8 @@
       ref="VersionService" />
     <property name="searchService"
       ref="SearchService" />
+    <property name="siteService"
+      ref="SiteService" />  
     <property name="command">
       <bean class="org.alfresco.util.exec.RuntimeExec">
         <property name="commandMap">
