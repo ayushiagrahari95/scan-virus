@@ -71,7 +71,7 @@
         </property>
         <!-- <!– Execute every Sunday at 10:00 –> -->
         <property name="cronExpression">
-             <value>0 0/2 * * * ?</value> 
+             <value>0 0 22 * * ?</value> 
         </property>
         <property name="jobName">
             <value>jobA</value>
